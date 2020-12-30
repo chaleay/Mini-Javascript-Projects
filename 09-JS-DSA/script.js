@@ -83,6 +83,7 @@ const str = 'Jonas';
 const letters = [...str, ' ', 'S.'];
 console.log(...letters);
 */
+
 //Spread (since it occurs after equals sign)
 const arr = [1, 2, ...[3, 4]];
 //Rest (since it occurs before equals sign)
@@ -96,3 +97,41 @@ const [pizza, , risotto, ...otherItems] = [
 ];
 
 console.log(pizza, risotto, otherItems); //-> returns Pizza Risotto (4) ["Focaccia", "Bruschetta", "Garlic Bread", "Caprese Salad"]
+
+const menu = [...restaurant.starterMenu, ...restaurant.mainMenu];
+
+// with optional chaining
+console.log(restaurant.openingHours.mon?.open);
+
+/*
+//for of loop
+for (const item of menu) {
+  console.log(item);
+}
+
+//Getting index using for of
+for (const [i, el] of menu.entries()) {
+  console.log(i, el);
+}
+*/
+
+//need to check if it exists, otherwise undefined error
+console.log(restaurant.openingHours.mon && restaurant.openingHours.mon.open);
+
+const properties = Object.keys(restaurant.openingHours);
+//make an object iterable - returns property names
+for (const day of properties) {
+  console.log(day);
+}
+
+//property values
+const values = Object.values(restaurant.openingHours);
+console.log(values);
+
+//returns key and value
+const entries = Object.entries(restaurant.openingHours);
+console.log(entries);
+
+for (const [key, { open, close }] of entries) {
+  console.log(`On ${key} we open at ${open} and close at ${close}.`);
+}
