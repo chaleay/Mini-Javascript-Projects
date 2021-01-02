@@ -168,3 +168,67 @@ const addTaxRate = function (rate) {
 console.log(addTaxRate(0.23)(100));
 
 */
+/*
+//Example 1
+const secureBooking = function () {
+  let passengerCount = 0;
+  return function () {
+    passengerCount++;
+    console.log(`${passengerCount} passengers`);
+  };
+};
+
+const booker = secureBooking();
+
+//What allows booker able to update passengerCount despite it not being in the execution context is Closures
+booker(); //1 passengers
+booker(); //2 passengers
+booker(); //3 passengers
+
+//Any function always has access to the variable environment of the execution context in which the function was created, even after the EC is gone
+*/
+
+/*
+let f;
+
+const g = function () {
+  const a = 23;
+  f = function () {
+    console.log(a * 2);
+  };
+};
+
+const h = function () {
+  const b = 777;
+  f = function () {
+    console.log(b * 2);
+  };
+};
+
+g();
+//still has access to g's variables even though g's execution context is removed
+f();
+//reassign f
+console.dir(f);
+
+h();
+f();
+console.dir(f); //no longer has the value of a after being reassigned
+
+//Example 2
+const boardPassengers = function (n, wait) {
+  const perGroup = n / 3;
+
+  //this function creates a closure to access boardPasengers variables after boardPassengers finishes its execution.
+  setTimeout(function () {
+    console.log(`We are now boarding all ${n} passengers`);
+    console.log(`There are 3 groups, each with ${perGroup} passengers`);
+  }, wait * 1000);
+
+  console.log(`Will start boarding in ${wait} seconds.`);
+};
+
+//closure has priority over scope chain
+const perGroup = 1000;
+boardPassengers(180, 3);
+*/
