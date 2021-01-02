@@ -34,6 +34,7 @@ document.body.addEventListener('click', high5);
 ['Blah', 'Yah', 'Fugg'].forEach(high5);
 */
 
+/*
 const greet = function (greeting) {
   console.log('First function');
   return function (name) {
@@ -62,3 +63,108 @@ greeterHey('Elijah');
 //Same thing
 greet('Hello')('Elijah');
 greet2('Hello')('Elijah');
+
+*/
+/*
+//CALL AND APPLY EXAMPLES
+const lufthansa = {
+  airline: 'Lufthansa',
+  iataCode: 'LH',
+  bookings: [],
+  book(flightNum, name) {
+    console.log(`${name} booked a seat on flight ${this.airline} ${flightNum}`);
+    this.bookings.push({
+      flight: `${this.iataCode} ${flightNum}`,
+      name,
+    });
+  },
+};
+
+lufthansa.book(239, 'Elijah');
+lufthansa.book(239, 'Gaytan');
+console.log(lufthansa);
+
+const eurowings = {
+  airline: 'eurowing',
+  iataCode: 'EW',
+  bookings: [],
+};
+
+const swiss = {
+  airline: 'Swiss',
+  iataCode: 'LX',
+  bookings: [],
+};
+
+//FIRST ORDER FUNCTION (points ot lufthansa book method)
+const book = lufthansa.book;
+//DOES NOT WORK
+//book(23, 'Sarah'); //undefined, b/c now its a seperate function
+
+//CALL METHOD
+//PARAM1 -> THE OBJECT THAT THE THIS KEYWORD WILL REFER TO
+//PARAM 2 / 3 - THE FUNCTION PARAMETERS
+book.call(eurowings, 23, 'Sarah Williams');
+console.log(eurowings);
+
+book.call(lufthansa, 239, 'Mary');
+console.log(lufthansa);
+
+book.call(swiss, 23, 'SwissBoy');
+console.log(swiss);
+
+// APPLY METHOD
+//Does the same thing
+
+const data = [583, 'George Cooper'];
+book.apply(swiss, data);
+console.log(swiss);
+
+//But it's bettter to just do this
+book.call(lufthansa, ...data);
+
+//Bind Method -> create new method where this paraemeter references EW
+const bookEW = book.bind(eurowings);
+const bookLH = book.bind(lufthansa);
+const bookLX = book.bind(swiss);
+
+bookEW(23, 'Stephen');
+
+const bookEW23 = book.bind(eurowings, 23);
+bookEW23('Elijah GayTon');
+console.log(eurowings);
+
+//With Event Listeners
+lufthansa.planes = 300;
+lufthansa.buyPlane = function () {
+  this.planes++;
+  console.log(this);
+  console.log(this.planes);
+};
+
+//In an eventlistener, the this keyword always point to the element that is being referenced
+document
+  .querySelector('.buy')
+  .addEventListener('click', lufthansa.buyPlane.bind(lufthansa));
+
+//Solution - bind the method!
+
+//Partial Application
+const addTax = (rate, value) => value + value * rate;
+console.log(addTax(0.1, 200));
+
+//we can use a null reference for the this keyword since its not important in this context
+const addVAT = addTax.bind(null, 0.23);
+
+console.log(addVAT(100));
+console.log(addVAT(23));
+
+const addTaxRate = function (rate) {
+  return function (value) {
+    return value + value * rate;
+  };
+};
+
+console.log(addTaxRate(0.23)(100));
+
+*/
