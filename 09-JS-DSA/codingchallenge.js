@@ -221,12 +221,17 @@ button.addEventListener('click', () => {
   //split by new line
   const textareaSplit = textarea.value.split('\n');
   console.log(textareaSplit);
+
+  //keep track of array items
+  let n = 0;
   for (const text of textareaSplit) {
+    n++;
     const textArray = text.trim().toLowerCase().split('_');
-    let secondPart = textArray[1];
+    let [firstPart, secondPart] = textArray;
+    //capitalize the first letter of the second part
     secondPart = secondPart.replace(secondPart[0], secondPart[0].toUpperCase());
     textArray[1] = secondPart;
     let newText = textArray.join('');
-    console.log(newText);
+    console.log(`${newText.padEnd(20, ' ')}${'✅'.repeat(n)}`);
   }
 });
