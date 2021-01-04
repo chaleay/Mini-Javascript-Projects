@@ -95,16 +95,39 @@ const makeUsername = function (accs) {
   });
 };
 
+const calcDisplaySummary = movements => {
+  const incomes = movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov);
+
+  const losses = movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov);
+
+  //bank only pays interest if interest income > 1
+  const interest = movements
+    .filter(mov => mov > 0)
+    .map(mov => mov * 0.012)
+    .filter((int, i, arr) => int >= 1)
+    .reduce((acc, mov) => acc + mov);
+
+  console.log(incomes, losses, interest);
+  labelSumIn.textContent = '$' + incomes.toFixed(2);
+  labelSumOut.textContent = '$' + Math.abs(losses).toFixed(2);
+  labelSumInterest.textContent = '$' + interest.toFixed(2);
+};
+
 const calcPrintBalance = movements => {
   const balance = movements.reduce((acc, cur) => {
     return acc + cur;
   });
-  labelBalance.textContent = `$${balance}`;
+  labelBalance.textContent = `$${balance.toFixed(2)}`;
 };
 
 displayMovements(account1.movements);
 makeUsername(accounts);
 calcPrintBalance(account1.movements);
+calcDisplaySummary(account1.movements);
 
 //console.log(accounts);
 
@@ -346,7 +369,8 @@ TEST DATA 1: [5, 2, 4, 1, 15, 8, 3]
 TEST DATA 2: [16, 6, 10, 5, 6, 1, 4]
 
 GOOD LUCK 😀
-*/
+
+
 
 const calcAverageHumanAge = function (ages) {
   const humanAges = ages.map((val, index) => {
@@ -365,3 +389,59 @@ const calcAverageHumanAge = function (ages) {
 
 console.log(calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]));
 console.log(calcAverageHumanAge([16, 6, 10, 5, 6, 1, 4]));
+
+
+//Chaining
+const euroToUsd = 1.1;
+
+console.log(movements);
+
+const totalDepositsUSD = movements
+  .filter(mov => mov > 0)
+  .map(mov => mov * euroToUsd)
+  .reduce((acc, mov) => acc + mov, 0);
+
+const totalDepositsUSD2 = movements
+  .filter(mov => mov > 0)
+  .map((mov, i, arr) => {
+    //the arr returned above
+    console.log(arr);
+    return mov * euroToUsd;
+  })
+  .reduce((acc, mov) => acc + mov, 0);
+
+console.log(totalDepositsUSD2);
+*/
+
+///////////////////////////////////////
+// Coding Challenge #3
+
+/* 
+Rewrite the 'calcAverageHumanAge' function from the previous challenge, but this time as an arrow function, and using chaining!
+
+TEST DATA 1: [5, 2, 4, 1, 15, 8, 3]
+TEST DATA 2: [16, 6, 10, 5, 6, 1, 4]
+
+GOOD LUCK 😀
+
+
+
+const calcAverageHumanAge = ages => {
+  return ages
+    .map(val => (val <= 2 ? 2 * val : 16 + val * 4))
+    .filter(age => age >= 18)
+    .reduce((acc, age, i, arr) => acc + age / arr.length, 0);
+};
+
+console.log(calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]));
+*/
+
+//The find method - Returns the first element that satisfies this condition
+const firstWidthdrawal = movements.find(mov => mov < 0);
+
+console.log(movements);
+console.log(firstWidthdrawal);
+
+//using find w/ objects
+const account = accounts.find(acc => acc.owner === 'Jessica Davis');
+console.log(account);
