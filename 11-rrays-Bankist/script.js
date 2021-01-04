@@ -95,19 +95,19 @@ const makeUsername = function (accs) {
   });
 };
 
-const calcDisplaySummary = movements => {
-  const incomes = movements
+const calcDisplaySummary = account => {
+  const incomes = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov);
 
-  const losses = movements
+  const losses = account.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov);
 
   //bank only pays interest if interest income > 1
-  const interest = movements
+  const interest = account.movements
     .filter(mov => mov > 0)
-    .map(mov => mov * 0.012)
+    .map(mov => mov * account.interestRate)
     .filter((int, i, arr) => int >= 1)
     .reduce((acc, mov) => acc + mov);
 
@@ -124,10 +124,40 @@ const calcPrintBalance = movements => {
   labelBalance.textContent = `$${balance.toFixed(2)}`;
 };
 
-displayMovements(account1.movements);
+//LOADIN IN FUNCTIONS
 makeUsername(accounts);
-calcPrintBalance(account1.movements);
-calcDisplaySummary(account1.movements);
+//event handler
+let currentAccount;
+
+btnLogin.addEventListener('click', function (e) {
+  //Prevent form
+  e.preventDefault();
+
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value.toLowerCase()
+  );
+
+  //optional chaining example
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    //Display UI and welcome message
+    labelWelcome.textContent =
+      'Welcome back ' + currentAccount.owner.split(' ')[0];
+    containerApp.style.opacity = 100;
+
+    //CLEAR INPUT FIELDS
+    inputLoginPin.value = inputLoginUsername.value = '';
+    inputLoginPin.blur();
+
+    displayMovements(currentAccount.movements);
+    calcPrintBalance(currentAccount.movements);
+    calcDisplaySummary(currentAccount);
+  } else {
+    currentAccount = null;
+    console.log('Pin or accountname was incorrect.');
+    labelWelcome.textContent =
+      'Pin or account name was not correct. Please try again.';
+  }
+});
 
 //console.log(accounts);
 
@@ -434,7 +464,8 @@ const calcAverageHumanAge = ages => {
 };
 
 console.log(calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]));
-*/
+
+
 
 //The find method - Returns the first element that satisfies this condition
 const firstWidthdrawal = movements.find(mov => mov < 0);
@@ -445,3 +476,4 @@ console.log(firstWidthdrawal);
 //using find w/ objects
 const account = accounts.find(acc => acc.owner === 'Jessica Davis');
 console.log(account);
+*/
