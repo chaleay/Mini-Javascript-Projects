@@ -74,7 +74,7 @@ const displayMovements = function (movements) {
       <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-      <div class="movements__value">$${movement}</div>
+      <div class="movements__value">$${movement.toFixed(2)}</div>
     </div>
     `;
 
@@ -117,11 +117,22 @@ const calcDisplaySummary = account => {
   labelSumInterest.textContent = '$' + interest.toFixed(2);
 };
 
-const calcPrintBalance = movements => {
-  const balance = movements.reduce((acc, cur) => {
+const calcPrintBalance = account => {
+  account.balance = account.movements.reduce((acc, cur) => {
     return acc + cur;
   });
-  labelBalance.textContent = `$${balance.toFixed(2)}`;
+  labelBalance.textContent = `$${account.balance.toFixed(2)}`;
+};
+
+const updateUI = acc => {
+  if (acc === null) {
+    containerApp.style.opacity = 0;
+    return;
+  }
+
+  displayMovements(acc.movements);
+  calcPrintBalance(acc);
+  calcDisplaySummary(acc);
 };
 
 //LOADIN IN FUNCTIONS
@@ -132,7 +143,6 @@ let currentAccount;
 btnLogin.addEventListener('click', function (e) {
   //Prevent form
   e.preventDefault();
-
   currentAccount = accounts.find(
     acc => acc.username === inputLoginUsername.value.toLowerCase()
   );
@@ -148,15 +158,75 @@ btnLogin.addEventListener('click', function (e) {
     inputLoginPin.value = inputLoginUsername.value = '';
     inputLoginPin.blur();
 
-    displayMovements(currentAccount.movements);
-    calcPrintBalance(currentAccount.movements);
-    calcDisplaySummary(currentAccount);
+    //UPDATE UI
+    updateUI(currentAccount);
   } else {
     currentAccount = null;
     console.log('Pin or accountname was incorrect.');
     labelWelcome.textContent =
       'Pin or account name was not correct. Please try again.';
   }
+});
+
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.find(
+    acc => acc.username === inputTransferTo.value.toLowerCase()
+  );
+  console.log(amount, receiverAcc);
+  inputTransferAmount.value = inputTransferTo = '';
+
+  if (
+    amount < 0 ||
+    amount > currentAccount.balance ||
+    receiverAcc?.username === currentAccount.username
+  ) {
+    console.log(
+      `Transfer of ${amount} to ${receiverAcc?.username} was NOT successful`
+    );
+  } else {
+    console.log(
+      `Transfer of ${amount} to ${receiverAcc?.username} was successful`
+    );
+    currentAccount.movements.push(-amount);
+    receiverAcc.movements.push(amount);
+    updateUI(currentAccount);
+  }
+});
+
+btnLoan.addEventListener('click', e => {
+  e.preventDefault();
+  const amount = Number(inputLoanAmount.value);
+
+  //Check if any movement is greater than 10% of requested loan
+  if (currentAccount.movements.some(mov => mov >= 0.1 * amount)) {
+    console.log(`Loan of ${amount} granted.`);
+    currentAccount.loans = amount;
+    currentAccount.movements.push(amount);
+  }
+
+  updateUI(currentAccount);
+
+  inputLoanAmount.value = '';
+});
+
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  //confirm pin and username to currrentaccount info
+  if (
+    inputCloseUsername.value === currentAccount.username.toLowerCase() &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    const index = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
+
+    accounts.splice(index, 1);
+    updateUI(null);
+  }
+  inputCloseUsername.value = inputCloseUserPin.value = '';
 });
 
 //console.log(accounts);
@@ -476,4 +546,80 @@ console.log(firstWidthdrawal);
 //using find w/ objects
 const account = accounts.find(acc => acc.owner === 'Jessica Davis');
 console.log(account);
+
+
+//includes, some, and every
+
+//returns true if any value in the array matches -130 EXACTLY
+console.log(movements.includes(-130));
+
+//TESTS FOR EQUALITY
+const anyDeposits = console.log(movements.some(mov => mov > 0));
+
+//Every method - every item must pass this test
+console.log(movements.every(mov => mov > 0));
+
+
+
+////////
+//FLAT//
+const arr = [1, 2, 3, [4, 5, 6], 7, 8];
+console.log(arr.flat());
+const arrDeep = [1, 2, 3, [4, 5, [6, 7, 8], 9], [10, [2]]];
+console.log(arrDeep.flat(2)); //[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2]
+
+const accountMovements = accounts.map(acc => acc.movements);
+
+//denest our arrays
+console.log(accountMovements.flat());
+
+//chainign way
+let overallBalance = accounts
+  .map(acc => acc.movements)
+  .flat()
+  .reduce((acc, mov) => acc + mov);
+
+//flatmap way (only goes 1 level deep)
+overallBalance = accounts
+  .flatMap(acc => acc.movements)
+  .reduce((acc, mov) => acc + mov);
+
+console.log(overallBalance);
+
+//////////////////////////////////////
 */
+
+//Strings
+const owners = ['Jonas', 'Zach', 'Adam', 'Martha'];
+console.log(owners.sort());
+
+//Numbers -> return < 0, A, B -> keep order
+//return > 0, B, A -> switch order
+
+//ascending order
+console.log(
+  movements.sort((a, b) => {
+    return a > b ? 1 : -1;
+  })
+);
+
+//ascending order
+console.log(
+  movements.sort((a, b) => {
+    return a - b;
+  })
+);
+
+//Descending
+console.log(
+  movements.sort((a, b) => {
+    return a > b ? -1 : 1;
+  })
+);
+
+//Descending
+console.log(
+  movements.sort((a, b) => {
+    return b - a;
+  })
+);
