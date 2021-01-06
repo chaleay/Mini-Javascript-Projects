@@ -296,7 +296,7 @@ console.log(Math.sqrt(25));
 console.log(25 ** 1 / 2);
 console.log(8 ** (1 / 3));
 
-*/
+
 ///////////////////////////////////////
 // Math and Rounding
 console.log(Math.sqrt(25));
@@ -344,3 +344,65 @@ console.log((2.7).toFixed(0)); //returns a string
 console.log((2.7).toFixed(3));
 console.log((2.345).toFixed(2));
 console.log(+(2.345).toFixed(2));
+
+
+// Working with BigInt
+console.log(2 ** 53 - 1);
+console.log(Number.MAX_SAFE_INTEGER);
+console.log(2 ** 53 + 1);
+console.log(2 ** 53 + 2);
+console.log(2 ** 53 + 3);
+console.log(2 ** 53 + 4);
+
+//Two ways to make big ints
+console.log(4838430248342043823408394839483204n);
+console.log(BigInt(48384302));
+
+//Operations
+
+console.log(1000000000n * 10000n);
+const num = 23;
+console.log(huge * BigInt(num));
+
+
+console.log(20n > 15)
+*/
+
+//Create a date
+const now = new Date();
+console.log(now);
+
+console.log(new Date('Wed Jan 06 2021 01:08:43'));
+//not best practice to do this
+console.log(new Date('December 24, 2015'));
+console.log(new Date(account1.movementsDates[0]));
+
+console.log(new Date(2037, 10, 19, 15, 23, 5));
+//auto corrects the date since november does NOT have 31 days (sets to dec 1st)
+console.log(new Date(2037, 10, 31));
+
+console.log(new Date(0));
+//create a date 3 days after the above
+console.log(new Date(3 * 24 * 60 * 60 * 1000));
+
+const future = new Date(2037, 10, 19, 15, 23, 5);
+console.log(future.getFullYear());
+console.log(future.getMonth());
+console.log(future.getDate());
+console.log(future.getDay());
+console.log(future.getHours());
+console.log(future.getMinutes());
+console.log(future.getSeconds());
+console.log(future.toISOString());
+console.log(future.getTime());
+
+console.log(new Date(2142278585000));
+console.log(now.getTime()); //1609918645093 time in ms
+console.log(now.toLocaleDateString()); //prints out date 1/06/21
+
+//get current timestamp
+console.log(Date.now());
+
+//setting
+future.setFullYear(2040);
+console.log(future);
