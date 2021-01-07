@@ -79,7 +79,7 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 //STATE VARS
-let currentAccount;
+let currentAccount, time;
 let sort = false;
 
 //returns formatted date
@@ -88,7 +88,6 @@ const formatMovementDate = (date, locale) => {
     Math.trunc(Math.abs((date2 - date1) / (1000 * 60 * 1440)));
 
   const daysPassed = calcDaysPassed(Date.now(), date.getTime());
-  console.log(daysPassed);
 
   if (daysPassed === 0) return 'Today';
   if (daysPassed === 1) return 'Yesterday';
@@ -136,7 +135,7 @@ const displayMovements = function (acc, sort = false) {
       i + 1
     } ${type}</div>
       <div class="movements__date">${displayDate}</div>
-      <div class="movements__value">$${formattedMov}</div>
+      <div class="movements__value">${formattedMov}</div>
     </div>
     `;
 
@@ -185,7 +184,6 @@ const calcDisplaySummary = account => {
     account.currency
   );
 
-  console.log(incomes, losses, interest);
   labelSumIn.textContent = formattedIncomes;
   labelSumOut.textContent = formattedLosses;
   labelSumInterest.textContent = formattedInterest;
@@ -222,13 +220,17 @@ makeUsername(accounts);
 btnLogin.addEventListener('click', function (e) {
   //Prevent form
   e.preventDefault();
-  currentAccount = accounts.find(
+  const foundAccount = accounts.find(
     acc => acc.username === inputLoginUsername.value.toLowerCase()
   );
 
   //optional chaining example
-  if (currentAccount?.pin === +inputLoginPin.value) {
+  if (
+    foundAccount?.pin === +inputLoginPin.value &&
+    currentAccount !== foundAccount
+  ) {
     //Display UI and welcome message
+    currentAccount = foundAccount;
     labelWelcome.textContent =
       'Welcome back ' + currentAccount.owner.split(' ')[0];
     containerApp.style.opacity = 100;
@@ -248,7 +250,6 @@ btnLogin.addEventListener('click', function (e) {
       year: 'numeric',
       //weekday: 'numeric',
     };
-    const locale = navigator.language;
 
     labelDate.textContent = new Intl.DateTimeFormat(
       currentAccount.locale,
@@ -260,13 +261,22 @@ btnLogin.addEventListener('click', function (e) {
     inputLoginPin.value = inputLoginUsername.value = '';
     inputLoginPin.blur();
 
+    //Timer
+    if (time) {
+      clearInterval(time);
+    }
+    time = startLogOutTimer();
+
     //UPDATE UI
     updateUI(currentAccount);
   } else {
-    currentAccount = null;
-    console.log('Pin or accountname was incorrect.');
     labelWelcome.textContent =
-      'Pin or account name was not correct. Please try again.';
+      currentAccount === foundAccount
+        ? 'You are already logged on.'
+        : 'Pin or account name was not correct. Please try again.';
+
+    if (currentAccount === foundAccount) return;
+    currentAccount = null;
   }
 });
 
@@ -307,16 +317,19 @@ btnLoan.addEventListener('click', e => {
   const amount = Math.floor(inputLoanAmount.value);
 
   //Check if any movement is greater than 10% of requested loan
-  if (currentAccount.movements.some(mov => mov >= 0.1 * amount)) {
-    console.log(`Loan of ${amount} granted.`);
-    currentAccount.loans = amount;
-    currentAccount.movements.push(amount);
-    currentAccount.movementsDates.push(new Date().toISOString());
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= 0.1 * amount)) {
+    //artifical delay
+    setTimeout(function () {
+      //console.log(`Loan of ${amount} granted.`);
+      currentAccount.loans = amount;
+      currentAccount.movements.push(amount);
+      currentAccount.movementsDates.push(new Date().toISOString());
+
+      updateUI(currentAccount);
+
+      inputLoanAmount.value = '';
+    }, 2500);
   }
-
-  updateUI(currentAccount);
-
-  inputLoanAmount.value = '';
 });
 
 btnClose.addEventListener('click', function (e) {
@@ -343,6 +356,38 @@ btnSort.addEventListener('click', e => {
   sort = !sort;
   displayMovements(currentAccount, sort);
 });
+
+const startLogOutTimer = function () {
+  const tick = () => {
+    const timerDisplay =
+      timer % 60 === 0
+        ? `${timer / 60}:`.padEnd(4, 0)
+        : `${Math.trunc(Math.floor(timer / 60))}:` +
+          `${timer % 60}`.padStart(2, 0);
+
+    //print the remaining time to UI
+    labelTimer.textContent = timerDisplay;
+
+    //when time is at 0, stop timer and log out user
+    if (timer === 0) {
+      alert('Your session has expired.');
+      clearInterval(time);
+      labelWelcome.textContent = `Log in to get started`;
+      containerApp.style.opacity = 0;
+      currentAccount = null;
+    }
+    timer--;
+  };
+
+  // Set Time to 5 minutes
+  let timer = 300; //2:00 if(timer % 60 === 0)
+
+  //call at beginning
+  tick();
+  //Call the timer every second
+  time = setInterval(tick, 1000);
+  return time;
+};
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -506,7 +551,7 @@ const daysPassed = (date1, date2) =>
 
 console.log(daysPassed(new Date(2037, 3, 14), new Date(2037, 3, 24)));
 
-*/
+
 
 //Internationalizing numbers
 const num = 3882325;
@@ -522,3 +567,29 @@ console.log(new Intl.NumberFormat('en-US', options).format(num));
 console.log(new Intl.NumberFormat('de-DE', options).format(num));
 console.log(new Intl.NumberFormat('ar-SY').format(num));
 console.log(new Intl.NumberFormat(navigator.language).format(num));
+
+
+//tiemout function
+setTimeout(
+  (ing1, ing2) => console.log(`Here is your pizza with ${ing1} and ${ing2}`),
+  3000,
+  'olives',
+  'spinach'
+);
+//this code will execute asynchronously
+console.log('Wait 3 seconds...');
+
+
+setInterval(() => {
+  const now = new Date();
+  const newDate = new Intl.DateTimeFormat(navigator.locale, {
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  }).format(now);
+
+  console.log(newDate);
+}, 2000);
+*/
