@@ -71,11 +71,7 @@ const displayMovements = function (movements, sort = false) {
   //innerhtml returns everything including the html tags
   containerMovements.innerHTML = ``;
 
-  const movs = sort
-    ? movements.slice().sort((a, b) => {
-        return a - b;
-      })
-    : movements;
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
 
   movs.forEach((movement, i) => {
     const type = movement > 0 ? 'deposit' : 'withdrawal';

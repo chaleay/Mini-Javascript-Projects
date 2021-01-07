@@ -202,7 +202,7 @@ const calcPrintBalance = account => {
     account.currency
   );
 
-  labelBalance.textContent = `$${formattedMov}`;
+  labelBalance.textContent = `${formattedMov}`;
 };
 
 const updateUI = acc => {
