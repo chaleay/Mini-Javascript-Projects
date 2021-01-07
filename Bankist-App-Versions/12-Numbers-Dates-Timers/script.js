@@ -105,6 +105,13 @@ const formatMovementDate = (date, locale) => {
   }
 };
 
+const formatCur = function (value, locale, currency) {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
+
 const displayMovements = function (acc, sort = false) {
   //remove any hardcoded html
   //differs from textcontent - textContent returns the text itself
@@ -120,13 +127,16 @@ const displayMovements = function (acc, sort = false) {
     const displayDate = formatMovementDate(date, acc.locale);
 
     const type = movement > 0 ? 'deposit' : 'withdrawal';
+
+    const formattedMov = formatCur(movement, acc.locale, acc.currency);
+
     const html = `
     <div class="movements__row">
       <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
       <div class="movements__date">${displayDate}</div>
-      <div class="movements__value">$${movement.toFixed(2)}</div>
+      <div class="movements__value">$${formattedMov}</div>
     </div>
     `;
 
@@ -163,17 +173,36 @@ const calcDisplaySummary = account => {
     .filter((int, i, arr) => int >= 1)
     .reduce((acc, mov) => acc + mov);
 
+  const formattedIncomes = formatCur(incomes, account.locale, account.currency);
+  const formattedLosses = formatCur(
+    Math.abs(losses),
+    account.locale,
+    account.currency
+  );
+  const formattedInterest = formatCur(
+    interest,
+    account.locale,
+    account.currency
+  );
+
   console.log(incomes, losses, interest);
-  labelSumIn.textContent = '$' + incomes.toFixed(2);
-  labelSumOut.textContent = '$' + Math.abs(losses).toFixed(2);
-  labelSumInterest.textContent = '$' + interest.toFixed(2);
+  labelSumIn.textContent = formattedIncomes;
+  labelSumOut.textContent = formattedLosses;
+  labelSumInterest.textContent = formattedInterest;
 };
 
 const calcPrintBalance = account => {
   account.balance = account.movements.reduce((acc, cur) => {
     return acc + cur;
   });
-  labelBalance.textContent = `$${account.balance.toFixed(2)}`;
+
+  const formattedMov = formatCur(
+    account.balance,
+    account.locale,
+    account.currency
+  );
+
+  labelBalance.textContent = `$${formattedMov}`;
 };
 
 const updateUI = acc => {
@@ -478,3 +507,18 @@ const daysPassed = (date1, date2) =>
 console.log(daysPassed(new Date(2037, 3, 14), new Date(2037, 3, 24)));
 
 */
+
+//Internationalizing numbers
+const num = 3882325;
+
+const options = {
+  style: 'currency', //percent, or currency
+  unit: 'mile-per-hour', //loook these up
+  currency: 'EUR',
+  //useGrouping: false, //no separators
+};
+
+console.log(new Intl.NumberFormat('en-US', options).format(num));
+console.log(new Intl.NumberFormat('de-DE', options).format(num));
+console.log(new Intl.NumberFormat('ar-SY').format(num));
+console.log(new Intl.NumberFormat(navigator.language).format(num));
