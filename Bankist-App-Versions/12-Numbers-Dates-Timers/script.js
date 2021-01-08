@@ -104,6 +104,13 @@ const formatMovementDate = (date, locale) => {
   }
 };
 
+const logout = () => {
+  clearInterval(time);
+  labelWelcome.textContent = `Log in to get started`;
+  containerApp.style.opacity = 0;
+  currentAccount = null;
+};
+
 const formatCur = function (value, locale, currency) {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
@@ -305,10 +312,15 @@ btnTransfer.addEventListener('click', function (e) {
     //amount
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
+
     //date
     currentAccount.movementsDates.push(new Date().toISOString());
     receiverAcc.movementsDates.push(new Date().toISOString());
     updateUI(currentAccount);
+
+    //Reset Timer - clear and set timer
+    clearInterval(time);
+    timer = startLogOutTimer();
   }
 });
 
@@ -326,6 +338,10 @@ btnLoan.addEventListener('click', e => {
       currentAccount.movementsDates.push(new Date().toISOString());
 
       updateUI(currentAccount);
+
+      //Reset time on action
+      clearInterval(time);
+      timer = startLogOutTimer();
 
       inputLoanAmount.value = '';
     }, 2500);
@@ -345,7 +361,7 @@ btnClose.addEventListener('click', function (e) {
     );
 
     accounts.splice(index, 1);
-    updateUI(null);
+    logout();
   }
   inputCloseUsername.value = inputClosePin.value = '';
 });
@@ -371,12 +387,10 @@ const startLogOutTimer = function () {
     //when time is at 0, stop timer and log out user
     if (timer === 0) {
       alert('Your session has expired.');
-      clearInterval(time);
-      labelWelcome.textContent = `Log in to get started`;
-      containerApp.style.opacity = 0;
-      currentAccount = null;
+      logout();
     }
     timer--;
+    console.log(timer);
   };
 
   // Set Time to 5 minutes
