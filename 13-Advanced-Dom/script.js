@@ -9,6 +9,10 @@ const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const btnScrollTo = document.querySelector('.btn--scroll-to');
 const section1 = document.querySelector('#section--1');
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+const nav = document.querySelector('.nav');
 
 const openModal = function (e) {
   e.preventDefault();
@@ -83,10 +87,6 @@ document.querySelector('.nav__links').addEventListener('click', function (e) {
 
 ////////////////////
 //Tabbed////
-const tabs = document.querySelectorAll('.operations__tab');
-///////////
-const tabsContainer = document.querySelector('.operations__tab-container');
-const tabsContent = document.querySelectorAll('.operations__content');
 
 tabsContainer.addEventListener('click', e => {
   const clicked = e.target.closest('.operations__tab');
@@ -94,20 +94,46 @@ tabsContainer.addEventListener('click', e => {
     return;
   }
 
-  //select active tab
-  tabs.forEach(t =>
-    t === clicked
-      ? clicked.classList.add('operations__tab--active')
-      : t.classList.remove('operations__tab--active')
-  );
+  console.log(clicked);
 
   //activate content area depending on what tab we clicked on
-  tabsContent.forEach(tc => tc.classList.remove('operations__content--active'));
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  clicked.classList.add('operations__tab--active');
 
+  //remove active content
+  tabsContent.forEach(tc => tc.classList.remove('operations__content--active'));
+  //replace active content with clicked content
   document
-    .querySelector(`.operations__content--${e.target.dataset.tab}`)
+    .querySelector(`.operations__content--${clicked.dataset.tab}`)
     .classList.add('operations__content--active');
+  document.querySelector('.operations__content--active').style.opacity = 1;
 });
+
+//Menu Fade
+const handleHover = function (e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    const logo = link.closest('.nav').querySelector('img');
+
+    siblings.forEach(item => {
+      if (item !== link) {
+        item.style.opacity = this;
+      }
+    });
+
+    logo.style.opacity = this;
+  }
+};
+
+//Menu Fade animation - fade out
+//using bind, this value get sets to first parameter
+nav.addEventListener('mouseover', handleHover.bind(0.5));
+
+//Menu FAde animation - fade back in
+nav.addEventListener('mouseout', handleHover.bind(1));
+
+/////////////////////
 
 //////////
 ///////////////////
