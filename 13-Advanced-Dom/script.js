@@ -110,6 +110,7 @@ tabsContainer.addEventListener('click', e => {
 });
 
 //Menu Fade
+//IMPORTANT: A HANDLER FUNCTION CAN ONLY TAKE ONE ARGUMENT
 const handleHover = function (e) {
   if (e.target.classList.contains('nav__link')) {
     const link = e.target;
@@ -127,7 +128,9 @@ const handleHover = function (e) {
 };
 
 //Menu Fade animation - fade out
-//using bind, this value get sets to first parameter
+//Using bind, this value get sets to THE first parameter.
+//If we wanted to pass in multiple values to the handler function,
+//we'd have to use an array or object
 nav.addEventListener('mouseover', handleHover.bind(0.5));
 
 //Menu FAde animation - fade back in
