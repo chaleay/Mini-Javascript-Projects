@@ -136,8 +136,52 @@ nav.addEventListener('mouseover', handleHover.bind(0.5));
 //Menu FAde animation - fade back in
 nav.addEventListener('mouseout', handleHover.bind(1));
 
-/////////////////////
+///////////////
+// // // /////Sticky navigation - bad solution///
+// const stickyCoords = section1.getBoundingClientRect();
+// window.addEventListener('scroll', function (e) {
+// my solution
+// if (stickyCoords.top <= 0) {
+// nav.classList.add('sticky');
+// } else nav.classList.remove('sticky');
+// if (window.scrollY > stickyCoords.top) nav.classList.add('sticky');
+// else nav.classList.remove('sticky');
+// });
 
+//////////////////////////////////
+//A better way - the intersection observer api
+
+// const obsCallback = function (entries, observer) {
+// entries.forEach(entry => {
+// console.log(entry);
+// });
+// };
+//
+// const obsOptions = {
+// root: null, //null refers to window
+// threshold: [0, 0.2], //how much / what % we want to have visible
+// };
+//
+// const observer = new IntersectionObserver(obsCallback, obsOptions);
+// observer.observe(section1);
+
+const header = document.querySelector('.header');
+
+const stickyNav = function (entries) {
+  //destructure
+  const [entry] = entries;
+  if (!entry.isIntersecting) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+};
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${nav.getBoundingClientRect().height}px`, //90px margin (to apply before threshold is reached)
+});
+headerObserver.observe(header);
+
+//////////////////////
 //////////
 ///////////////////
 /*
