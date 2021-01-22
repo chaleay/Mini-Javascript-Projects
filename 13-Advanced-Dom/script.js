@@ -186,9 +186,12 @@ const allSections = document.querySelectorAll('.section');
 
 const revealSection = function (entries, observer) {
   const [entry] = entries;
-  console.log(entry);
+  const selectedSection = document.getElementById(entry.target.id);
+  if (entry.isIntersecting) {
+    selectedSection?.classList.remove('section--hidden');
+    observer?.unobserve(entry.target);
+  }
 };
-
 const sectionObserver = new IntersectionObserver(revealSection, {
   root: null,
   threshold: 0.15,
