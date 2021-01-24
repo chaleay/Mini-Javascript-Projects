@@ -188,6 +188,7 @@ const revealSection = function (entries, observer) {
   const [entry] = entries;
   const selectedSection = document.getElementById(entry.target.id);
   if (entry.isIntersecting) {
+    //allow us to see the section, and unobserve so it no longer triggers this event
     selectedSection?.classList.remove('section--hidden');
     observer?.unobserve(entry.target);
   }
@@ -199,8 +200,75 @@ const sectionObserver = new IntersectionObserver(revealSection, {
 
 allSections.forEach(function (section) {
   sectionObserver.observe(section);
-  section.classList.add('section--hidden');
+  //section.classList.add('section--hidden');
 });
+
+//Lazy Loading///
+const imgTargets = document.querySelectorAll('img[data-src]');
+
+const loadImg = function (entries, observer) {
+  const [entry] = entries;
+  if (!entry.isIntersecting) return;
+
+  //Replace src with data-src
+  entry.target.src = entry.target.dataset.src;
+  entry.target.addEventListener('load', () => {
+    //remove the lazy-img filter when it finishes loading
+    entry.target.classList.remove('lazy-img');
+  });
+
+  imgObserver.unobserve(entry.target);
+};
+
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '200px', //start 200 px before
+});
+
+imgTargets.forEach(img => imgObserver.observe(img));
+
+/////////////////
+////Slider//////
+
+const slides = document.querySelectorAll('.slide');
+const slider = document.querySelector('.slider');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+
+let curSlide = 0;
+
+slider.style.transform = 'scale(0.4) translateX(-800px)';
+slider.style.overflow = 'visible';
+
+//
+const goToSlide = num => {
+  slides.forEach(
+    (s, i) => (s.style.transform = `translateX(${100 * (i - num)}%)`)
+  );
+};
+
+goToSlide(0);
+function nextSlide() {
+  if (curSlide === slides.length - 1) return;
+  curSlide++;
+  goToSlide(curSlide);
+}
+
+function prevSlide() {
+  if (curSlide === 0) return;
+  curSlide--;
+  goToSlide(curSlide);
+}
+
+//btnright scroll
+btnRight.addEventListener('click', nextSlide);
+
+//btnleft scroll using my patented formula
+btnLeft.addEventListener('click', prevSlide);
+
+////////////////
+//////////////
 
 //////////////////////
 //////////
