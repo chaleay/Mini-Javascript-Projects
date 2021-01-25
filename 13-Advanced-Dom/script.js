@@ -235,17 +235,41 @@ const slides = document.querySelectorAll('.slide');
 const slider = document.querySelector('.slider');
 const btnLeft = document.querySelector('.slider__btn--left');
 const btnRight = document.querySelector('.slider__btn--right');
+const dotContainer = document.querySelector('.dots');
 
 let curSlide = 0;
 
-slider.style.transform = 'scale(0.4) translateX(-800px)';
-slider.style.overflow = 'visible';
+const createDots = function () {
+  slides.forEach(function (_, i) {
+    dotContainer.insertAdjacentHTML(
+      'beforeend',
+      ` 
+      <button class='dots__dot ${
+        i === 0 ? 'dots__dot--active' : null
+      }' data-slide="${i}"></button>
+      `
+    );
+  });
+};
+createDots();
+
+const activateDot = slide => {
+  //remove active classes
+  document
+    .querySelectorAll('.dots__dot')
+    .forEach(dot => dot.classList.remove('dots__dot--active'));
+
+  document
+    .querySelector(`.dots__dot[data-slide="${slide}"]`)
+    .classList.add('dots__dot--active');
+};
 
 //
 const goToSlide = num => {
   slides.forEach(
     (s, i) => (s.style.transform = `translateX(${100 * (i - num)}%)`)
   );
+  activateDot(num);
 };
 
 goToSlide(0);
@@ -266,6 +290,20 @@ btnRight.addEventListener('click', nextSlide);
 
 //btnleft scroll using my patented formula
 btnLeft.addEventListener('click', prevSlide);
+
+document.addEventListener('keydown', function (e) {
+  console.log(e);
+  if (e.key === 'ArrowLeft') prevSlide();
+  if (e.key === 'ArrowRight') nextSlide();
+});
+
+//wait for dot event click ( container for more efficiency)
+dotContainer.addEventListener('click', function (e) {
+  if (e.target.classList.contains('dots__dot')) {
+    const slide = e.target.dataset.slide;
+    goToSlide(slide);
+  }
+});
 
 ////////////////
 //////////////
