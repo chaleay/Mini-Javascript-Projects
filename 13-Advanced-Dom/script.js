@@ -230,80 +230,87 @@ imgTargets.forEach(img => imgObserver.observe(img));
 
 /////////////////
 ////Slider//////
+const slider = function () {
+  const slides = document.querySelectorAll('.slide');
+  const btnLeft = document.querySelector('.slider__btn--left');
+  const btnRight = document.querySelector('.slider__btn--right');
+  const dotContainer = document.querySelector('.dots');
 
-const slides = document.querySelectorAll('.slide');
-const slider = document.querySelector('.slider');
-const btnLeft = document.querySelector('.slider__btn--left');
-const btnRight = document.querySelector('.slider__btn--right');
-const dotContainer = document.querySelector('.dots');
+  let curSlide = 0;
 
-let curSlide = 0;
+  const createDots = function () {
+    slides.forEach(function (_, i) {
+      dotContainer.insertAdjacentHTML(
+        'beforeend',
+        ` 
+        <button class='dots__dot ${
+          i === 0 ? 'dots__dot--active' : null
+        }' data-slide="${i}"></button>
+        `
+      );
+    });
+  };
 
-const createDots = function () {
-  slides.forEach(function (_, i) {
-    dotContainer.insertAdjacentHTML(
-      'beforeend',
-      ` 
-      <button class='dots__dot ${
-        i === 0 ? 'dots__dot--active' : null
-      }' data-slide="${i}"></button>
-      `
+  const activateDot = slide => {
+    //remove active classes
+    document
+      .querySelectorAll('.dots__dot')
+      .forEach(dot => dot.classList.remove('dots__dot--active'));
+
+    document
+      .querySelector(`.dots__dot[data-slide="${slide}"]`)
+      .classList.add('dots__dot--active');
+  };
+
+  //
+  const goToSlide = num => {
+    slides.forEach(
+      (s, i) => (s.style.transform = `translateX(${100 * (i - num)}%)`)
     );
+    activateDot(num);
+  };
+
+  function nextSlide() {
+    if (curSlide === slides.length - 1) return;
+    curSlide++;
+    goToSlide(curSlide);
+  }
+
+  function prevSlide() {
+    if (curSlide === 0) return;
+    curSlide--;
+    goToSlide(curSlide);
+  }
+
+  const init = () => {
+    createDots();
+    goToSlide(0);
+  };
+
+  init();
+
+  //Event listeners
+  //btnright scroll
+  btnRight.addEventListener('click', nextSlide);
+
+  //btnleft scroll using my patented formula
+  btnLeft.addEventListener('click', prevSlide);
+
+  document.addEventListener('keydown', function (e) {
+    console.log(e);
+    if (e.key === 'ArrowLeft') prevSlide();
+    if (e.key === 'ArrowRight') nextSlide();
+  });
+
+  //wait for dot event click ( container for more efficiency)
+  dotContainer.addEventListener('click', function (e) {
+    if (e.target.classList.contains('dots__dot')) {
+      const slide = e.target.dataset.slide;
+      goToSlide(slide);
+    }
   });
 };
-createDots();
-
-const activateDot = slide => {
-  //remove active classes
-  document
-    .querySelectorAll('.dots__dot')
-    .forEach(dot => dot.classList.remove('dots__dot--active'));
-
-  document
-    .querySelector(`.dots__dot[data-slide="${slide}"]`)
-    .classList.add('dots__dot--active');
-};
-
-//
-const goToSlide = num => {
-  slides.forEach(
-    (s, i) => (s.style.transform = `translateX(${100 * (i - num)}%)`)
-  );
-  activateDot(num);
-};
-
-goToSlide(0);
-function nextSlide() {
-  if (curSlide === slides.length - 1) return;
-  curSlide++;
-  goToSlide(curSlide);
-}
-
-function prevSlide() {
-  if (curSlide === 0) return;
-  curSlide--;
-  goToSlide(curSlide);
-}
-
-//btnright scroll
-btnRight.addEventListener('click', nextSlide);
-
-//btnleft scroll using my patented formula
-btnLeft.addEventListener('click', prevSlide);
-
-document.addEventListener('keydown', function (e) {
-  console.log(e);
-  if (e.key === 'ArrowLeft') prevSlide();
-  if (e.key === 'ArrowRight') nextSlide();
-});
-
-//wait for dot event click ( container for more efficiency)
-dotContainer.addEventListener('click', function (e) {
-  if (e.target.classList.contains('dots__dot')) {
-    const slide = e.target.dataset.slide;
-    goToSlide(slide);
-  }
-});
+slider();
 
 ////////////////
 //////////////
@@ -451,3 +458,11 @@ logo.className = '';
 // el.style.transform = 'scale(.1)';
 // }
 // });
+
+//////
+//Dom Events
+//when html is parsed and dom tree built
+// document.addEventListener('DOMContentLoaded', function (e) {});
+//
+//when page is loaded
+// window.addEventListener('load', function (e) {});
