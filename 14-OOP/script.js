@@ -81,7 +81,7 @@ console.log(arr.unique()); //works
 const h1 = document.querySelector('h1'); //proto = node
 console.dir(x => x + 1); //proto = functions proto
 
-*/
+
 
 //1
 const Car = function (make, speed) {
@@ -107,3 +107,70 @@ Car.prototype.brake = function () {
 const car = new Car('Toyota', 20);
 car.brake();
 car.accelerate();
+*/
+
+//Es6 class - getters, setters, es6 class dec
+class PersonCl {
+  constructor(fullName, birthYear) {
+    this.fullName = fullName;
+    this.birthYear = birthYear;
+  }
+
+  // Instance methods
+  calcAge() {
+    console.log(2037 - this.birthYear);
+  }
+
+  greet() {
+    console.log(`Hey ${this.fullName}`);
+  }
+
+  get age() {
+    return 2037 - this.birthYear;
+  }
+
+  set fullName(name) {
+    if (name.includes(' ')) this._fullName = name;
+    else alert(`${name} is not a full name!`);
+  }
+
+  get fullName() {
+    return this._fullName;
+  }
+
+  //creating a static method
+  //from method is in array's namespace (not prototype)
+  static hey() {
+    console.log('hey');
+    console.log(this);
+  }
+}
+
+PersonCl.hey(); //this refers to calling class i.e in this case the personCL class
+
+//1. Classes are not hoisted
+//2. Classes are first-class citizens (we can pass them into functions / return them)
+//3. classes are executed in strict mode ()
+
+//Object.create - manually set prototype to
+const PersonProto = {
+  calcAge() {
+    console.log(2037 - this.birthYear);
+  },
+
+  init(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  },
+};
+
+const steve = Object.create(PersonProto);
+console.log(steve); //no properties yet
+//assign attributes
+steve.name = 'Steve';
+steve.birthYear = 2002;
+steve.calcAge(0);
+
+const per = Object.create(PersonProto);
+per.init('Sarah', 1979);
+per.calcAge();
