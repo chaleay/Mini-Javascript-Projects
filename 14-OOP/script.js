@@ -108,7 +108,7 @@ const car = new Car('Toyota', 20);
 car.brake();
 car.accelerate();
 */
-
+/*
 //Es6 class - getters, setters, es6 class dec
 class PersonCl {
   constructor(fullName, birthYear) {
@@ -174,3 +174,38 @@ steve.calcAge(0);
 const per = Object.create(PersonProto);
 per.init('Sarah', 1979);
 per.calcAge();
+ */
+
+//cc2
+//1.
+class car {
+  constructor(make, speed) {
+    this.make = make;
+    this.speed = speed;
+  }
+
+  brake() {
+    this.speed -= 10;
+    console.log(`New speed after brake for ${this.make} is ${this.speed}`);
+  }
+
+  accelerate() {
+    this.speed += 10;
+    console.log(`New speed after accelerate for ${this.make} is ${this.speed}`);
+  }
+
+  get speedUS() {
+    return `${this.make} is going ${this.speed / 1.6} mi/h`;
+  }
+
+  set speedUS(speed) {
+    this.speed = speed * 1.6;
+  }
+}
+
+//test
+const ford = new car('Ford', 120);
+console.log(ford.speedUS);
+ford.speedUS = 50;
+console.log(ford.speedUS); //50 mi/h
+console.log(ford); //80 km/h
