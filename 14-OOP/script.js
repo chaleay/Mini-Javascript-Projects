@@ -174,7 +174,7 @@ steve.calcAge(0);
 const per = Object.create(PersonProto);
 per.init('Sarah', 1979);
 per.calcAge();
- */
+ 
 
 //cc2
 //1.
@@ -209,3 +209,116 @@ console.log(ford.speedUS);
 ford.speedUS = 50;
 console.log(ford.speedUS); //50 mi/h
 console.log(ford); //80 km/h
+
+
+//Inheritance using constructor functions
+const Person = function (firstName, birthYear) {
+  this.firstName = firstName;
+  this.birthYear = birthYear;
+};
+
+Person.prototype.calcAge = function () {
+  console.log(2037 - this.birthYear);
+};
+
+console.log(Person.prototype);
+
+const Student = function (firstName, birthYear, course) {
+  //akin to super in es6 classes
+  Person.call(this, firstName, birthYear);
+  this.course = course;
+};
+
+//the actual inheritance part (needs to be before method declaration )
+Student.prototype = Object.create(Person.prototype);
+
+Student.prototype.introduce = function () {
+  console.log(
+    `My name is ${this.firstName}, I graduate in ${this.birthYear} and I major in ${this.course}`
+  );
+};
+
+//this student's prototype now references the actual prototype
+console.log(Student.prototype);
+
+const mike = new Student('mike', 2020, 'CS');
+console.log(mike);
+mike.introduce();
+mike.calcAge();
+
+console.log(mike.__proto__);
+console.log(mike.__proto__.__proto__);
+
+//need to also set the constructor as well
+Student.prototype.constructor = Student;
+
+console.log(mike instanceof Student);
+console.log(mike instanceof Person); //true beacuse of object.create line
+
+console.log(Student.prototype);
+*/
+//es6 classes
+//cc3
+
+/*
+const Car = function (make, speed) {
+  this.make = make;
+  this.speed = speed;
+};
+
+Car.prototype.accelerate = function () {
+  this.speed += 10;
+  console.log(`New speed after accelerate for ${this.make} is ${this.speed}`);
+};
+
+Car.prototype.brake = function () {
+  this.speed -= 10;
+  console.log(`New speed after brake for ${this.make} is ${this.speed}`);
+};
+
+const ElectricCar = function (make, speed, charge) {
+  Car.call(this, make, speed);
+  this.charge = charge;
+};
+
+ElectricCar.prototype = Object.create(Car.prototype);
+
+//still not sure what to do
+//ElectricCar.prototype.constructor = ElectricCar;
+
+ElectricCar.prototype.chargeTo = function (newCharge) {
+  console.log(`charged from ${this.charge} to ${newCharge}`);
+  this.charge = newCharge;
+};
+
+ElectricCar.prototype.accelerate = function () {
+  this.speed += 10;
+  this.charge -= 1;
+  console.log(
+    `New speed after accelerate for ${this.make} is ${this.speed}, and battery decreased by 1% to ${this.charge}%`
+  );
+};
+
+const ecar = new ElectricCar('Tesla', 100, 100);
+console.log(Car.prototype);
+console.log(ecar.__proto__);
+
+const car = new Car('Toyota', 100);
+car.accelerate();
+ecar.accelerate();
+*/
+
+//Es6 Classes
+class PersonCl {
+  constructor(fullName, birthYear) {
+    this.fullName = fullName;
+    this.birthYear = birthYear;
+  }
+}
+
+class Student extends PersonCl {
+  constructor(fullName, birthYear, major) {
+    super(fullName, birthYear);
+    this.major = major;
+  }
+}
