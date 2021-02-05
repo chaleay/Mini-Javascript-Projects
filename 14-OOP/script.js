@@ -314,6 +314,10 @@ class PersonCl {
     this.fullName = fullName;
     this.birthYear = birthYear;
   }
+
+  hey() {
+    console.log(`hello from ${this.constructor.name}`);
+  }
 }
 
 class Student extends PersonCl {
@@ -321,4 +325,16 @@ class Student extends PersonCl {
     super(fullName, birthYear);
     this.major = major;
   }
+
+  introduce() {
+    console.log(`My name is ${this.fullName} and I study ${this.major}`);
+  }
+
+  hey() {
+    console.log('Hi!');
+  }
 }
+
+const martha = new Student('Martha Jones', 2012);
+console.log(martha);
+martha.hey();
