@@ -306,7 +306,7 @@ console.log(ecar.__proto__);
 const car = new Car('Toyota', 100);
 car.accelerate();
 ecar.accelerate();
-*/
+
 
 //Es6 Classes
 class PersonCl {
@@ -338,3 +338,154 @@ class Student extends PersonCl {
 const martha = new Student('Martha Jones', 2012);
 console.log(martha);
 martha.hey();
+*/
+
+//object create classes example
+/*
+const PersonProto = {
+  calcAge() {
+    console.log(2037 - this.birthYear);
+  },
+
+  init(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  },
+};
+
+//steven uses the personProto
+const steven = Object.create(PersonProto);
+
+// student here uses the PersonProto as well
+const StudentProto = Object.create(PersonProto);
+StudentProto.init = function (firstName, birthYear, course) {
+  PersonProto.init.call(this, firstName, birthYear);
+  this.course = course;
+};
+
+const jay = Object.create(StudentProto);
+jay.init('Jay', 2010, 'CS');
+console.log(jay);
+jay.calcAge();
+
+
+//Encapsulation + new features for javascript in future
+//may only work with chrome + firefox engines
+class Account {
+  //public fields
+  locale = navigator.language;
+  //private fields
+  #movements = [];
+  #pin;
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    this.#pin = pin;
+    //protected\
+    //_movements = [];
+
+    console.log(`Thanks for opening an account, ${owner}`);
+  }
+
+  //public methods
+  //public interface
+  deposit(val) {
+    this.#movements.push(val);
+    return this;
+  }
+
+  //widthdraw
+  withdraw(val) {
+    this.deposit(-val);
+    return this;
+  }
+
+  _approveLoan(val) {
+    return true;
+  }
+
+  requestLoan(val) {
+    if (this._approveLoan(val)) {
+      this.deposit(val);
+      console.log(`Loan approved`);
+    }
+    return this;
+  }
+
+  getMovements() {
+    return this.#movements;
+  }
+}
+
+const acc1 = new Account('Jonas', 'EUR', 1111);
+console.log(acc1);
+acc1.deposit(100);
+acc1.withdraw(200);
+acc1.requestLoan(1000);
+
+//bad practice
+// acc1.movemnents.push(250);
+// acc1.movemnents.push(-140);
+
+//chaining
+acc1.deposit(300).deposit(300).withdraw(35).requestLoan(25000).withdraw(4000);
+*/
+//OOP cc#4
+
+class CarCl {
+  constructor(make, speed) {
+    this.make = make;
+    this.speed = speed;
+  }
+
+  acclerate() {
+    this.speed += 10;
+    console.log(`${this.make} is now going at ${this.speed} km/h after accel`);
+    return this;
+  }
+
+  brake() {
+    this.speed -= 10;
+    console.log(`${this.make} is now going at ${this.speed} km/h after brake`);
+    return this;
+  }
+
+  get speedUS() {
+    return speed / 1.6;
+  }
+
+  set speedUS(speed) {
+    this.speed = speed * 1.6;
+  }
+}
+
+class EV extends CarCl {
+  constructor(make, speed, charge) {
+    super(make, speed);
+    this._charge = charge;
+  }
+
+  acclerate() {
+    this.speed += 10;
+    this._charge -= 1;
+    console.log(
+      `${this.make} is now going at ${this.speed} km/h after accel, and now the charge is at ${this._charge}%`
+    );
+    return this;
+  }
+
+  chargeBattery(charge) {
+    console.log(`Battery charged from ${this._charge} to ${charge}`);
+    this._charge = charge;
+    return this;
+  }
+
+  get charge() {
+    return this._charge;
+  }
+}
+
+const tesla = new EV('Tesla', 100, 100);
+console.log(tesla.charge);
+tesla.acclerate().chargeBattery(100);
